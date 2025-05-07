@@ -1,4 +1,3 @@
-"use client"
 import SignupForm from "@/component/SignUpForm"
 
 export default function SignupPage() {

@@ -1,4 +1,3 @@
-"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -29,8 +28,8 @@ export default function Header() {
 
         <div className="flex items-center gap-4 pr-8" >
         <div className="flex space-x-4">
-  <Button className="bg-orange-600 hover:bg-orange-700">Login</Button>
-  <Button className="bg-white text-orange-600 border border-orange-600 hover:bg-orange-50">Sign Up</Button>
+  <Link href="/login"><Button className="bg-orange-600 hover:bg-orange-700">Login</Button></Link>
+  <Link href="/signup"><Button className="bg-white text-orange-600 border border-orange-600 hover:bg-orange-50">Sign Up</Button> </Link>
 </div>
 
         </div>
