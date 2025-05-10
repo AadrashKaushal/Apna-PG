@@ -1,7 +1,5 @@
 "use client"
-
 import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -30,6 +28,7 @@ export default function LoginForm() {
                 type="button"
                 variant="ghost"
                 size="icon"
+                
                 className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground"
               >
                 {/* {showPassword ? <EyeOff size={16} /> : <Eye size={16} />} */}
@@ -50,7 +49,7 @@ export default function LoginForm() {
               Forgot password?
             </Link>
           </div>
-          <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" >
+          <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" > 
             Login
           </Button>
         </form>
