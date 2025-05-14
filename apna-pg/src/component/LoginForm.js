@@ -5,8 +5,40 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useForm } from "react-hook-form";
+import {useState,useContext} from 'react';
+import { loginUserAccount } from "@/server/serverActions";
+import { toast,ToastContainer } from "react-toastify"
+import { setLocalStorage } from "@/utilityFunctions/localStorage"
+import { globalContext } from "@/contextApi/globalContext"
+import { useRouter } from "next/navigation"
 
 export default function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState : {errors,isSubmitting}
+  } = useForm();
+
+  let {activeProfile,setProfile} = useContext(globalContext);
+  let router = useRouter();
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const loginAccount = async(data) =>{
+    let response = await loginUserAccount(data);
+    if(response.message == 'success') {
+      reset()
+      setLocalStorage('token',response.token);
+      setProfile(!activeProfile );
+      setTimeout(()=>{
+        router.push('/');  
+      })
+    } else {
+      toast.error(response.message);
+    }
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -15,25 +47,31 @@ export default function LoginForm() {
         <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
       </CardHeader>
       <CardContent>
-        <form  className="space-y-4">
+        <form  className="space-y-4" onSubmit={handleSubmit(loginAccount)}>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="name@example.com" required />
+            <Label>Email</Label>
+            <Input type="email" placeholder="name@example.com" {...register('email',
+            {required:{ value : true , message : "This field is required"} }
+            )} />
+             {errors.email && <span className="text-red-500">{errors.email.message}</span>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Input id="password" type="password"  placeholder="••••••••" required />
+              <Input id="password" type={showPassword ? 'text' : 'password'}  placeholder="Enter Password" {...register('password',
+              { required : { value : true , message :"This Field is Required" } }
+              ) } />
               <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                
-                className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground"
-              >
-                {/* {showPassword ? <EyeOff size={16} /> : <Eye size={16} />} */}
-              </Button>
+                        onClick={() => setShowPassword(!showPassword)}
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-14 text-sm rounded-sm"
+                      >
+                        {showPassword ? 'Hide' : 'Show'}
+                      </Button>
             </div>
+            {errors.password && <span className="text-red-500">{errors.password.message}</span>}
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -49,22 +87,12 @@ export default function LoginForm() {
               Forgot password?
             </Link>
           </div>
-          <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" > 
-            Login
+          <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={isSubmitting}> 
+            {isSubmitting ? 'Logging in' : 'Login'} 
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t"></span>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline">Google</Button>
-          <Button variant="outline">Facebook</Button>
-        </div>
         <div className="text-center text-sm">
           Don't have an account?{" "}
           <Link href="/signup" className="text-orange-600 hover:text-orange-800 font-medium">
@@ -72,6 +100,7 @@ export default function LoginForm() {
           </Link>
         </div>
       </CardFooter>
+      <ToastContainer/>
     </Card>
   )
 }

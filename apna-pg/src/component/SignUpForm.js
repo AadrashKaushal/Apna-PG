@@ -69,7 +69,7 @@ export default function SignUpForm({userRole}) {
       let response = await sendEmailToUser(formResponse.email,generatedOTP);
 
 
-      if(response == 'success') {
+      if(response.message == 'success') {
         setActiveOTPVerification(true);
         toast.success('OTP Send Successfully');
       } else {
@@ -79,7 +79,7 @@ export default function SignUpForm({userRole}) {
       
       setFormData({
         firstName: formResponse.fName,
-        lastName: formResponse.lName,
+        lastName: formResponse.lName ? formResponse.lName : "",
         email: formResponse.email,
         password: formResponse.password,
         userRole:userRole
